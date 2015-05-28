@@ -10,9 +10,6 @@ package "apache2"
 # require 'pry' ; binding.pry
 
 index_filepath = "/var/www/html/index.html"
-
-# Case Statment Example
-
 if node["platform_version"] == "12.04"
   index_filepath = "/var/www/index.html"
 end
@@ -28,11 +25,6 @@ service "apache2" do
   action [ :start, :enable ] 
 end
 
-
-directory "/var/www/admin/html" do
-  recursive true
-end
-
 config_filepath = "/etc/apache2/conf-enabled"
 
 if node["platform_version"] == "12.04"
@@ -45,6 +37,10 @@ template "#{config_filepath}/admin.conf" do
   notifies :restart, "service[apache2]"
 end
 
+directory "/var/www/admin/html" do
+  recursive true
+end
+
 file "/var/www/admin/html/index.html" do
   content "Welcome Admin!"
 end
@@ -54,7 +50,7 @@ apache_vhost "powerusers" do
   config_file "#{config_filepath}/powerusers.conf"
   config_filepath "#{config_filepath}"
   port 8000
-  document_root "/var/www/powerusers/html"
+  # document_root "/var/www/powerusers/html"
   content "Hello power users"
   notifies :restart, "service[apache2]"
   action :create
@@ -65,7 +61,7 @@ apache_vhost "superlions" do
   config_file "#{config_filepath}/superlions.conf"
   config_filepath "#{config_filepath}"
   port 7000
-  document_root "/var/www/superlions/html"
+  # document_root "/var/www/superlions/html"
   content "Hey it's superlions"
   notifies :restart, "service[apache2]"
   action :create
